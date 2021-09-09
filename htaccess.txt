@@ -1,0 +1,18 @@
+RewriteEngine on
+
+Options -Indexes
+## HTTPS ##
+# RewriteCond %{HTTPS} off
+# RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+## Admin Dashboard ##
+RewriteRule ^admin/backend/([a-z_-]+)$ admin/backend/handler.php?handler=$1 [L,QSA]
+RewriteRule ^admin/backend/([a-z_-]+)/([a-zA-Z0-9_-])$ admin/backend/handler.php?handler=$1&sub=$2 [L,QSA]
+RewriteRule ^admin/backend/$ ./ [F]
+RewriteRule ^admin/login$ admin/login.php [L,QSA]
+RewriteRule ^admin/([a-z_-]+)$ admin/index.php?page=$1 [L,QSA]
+RewriteRule ^admin/([a-z_-]+)/$ admin/$1 [R]
+RewriteRule ^admin/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)$ admin/index.php?page=$1&subpage=$2 [NC,QSA]
