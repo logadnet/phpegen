@@ -1,0 +1,130 @@
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row text-muted">
+                            <div class="col-6 text-left">
+                                <p class="mb-0">
+                                    <a href="<?=$siteurl?>" class="text-muted"><strong><?=$sitename?></strong></a> &copy; <?=date("Y")?>
+                                </p>
+                            </div>
+                            <div class="col-6 text-right">
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <script src="js/vendor.js"></script>
+        <script src="js/app.js"></script>
+
+        <!-- include summernote css/js -->
+        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
+        <script src="js/pjax/pjax.js"></script>
+        <script type="text/javascript">
+            //PJAX
+            var pjax;
+            var initButtons = function() {
+                var buttons = document.querySelectorAll("a.lazy");
+                if (!buttons) {
+                    return;
+                }
+            };
+            document.addEventListener("pjax:success", function() {
+              // loadnotifications();
+              autoactive();
+              re_init();
+              initButtons();
+              $("script").each(function() {
+                $.globalEval(this.text || this.textContent || this.innerHTML || '');
+                })
+            });
+            document.addEventListener("DOMContentLoaded", function() {
+              pjax = new Pjax({
+                elements: ["a.lazy"],
+                selectors: ["title","main.content"],
+                cacheBust: true
+              });
+              autoactive();
+              re_init();
+              initButtons();
+            });
+        </script>
+        <script src="js/custom.js"></script>
+        <!-- <script type="text/javascript" src="js/pace.min.js"></script> -->
+
+        <script>
+            // Auto Active
+            function autoactive() {
+                var current = location.pathname;
+                $('#sidebar ul li').removeClass("active");
+                $('#sidebar ul li a').each(function(){
+                    var $this = $(this);
+                    new_current = current.split("/")[current.split("/").length-1];
+                    
+                    if (new_current == '') {
+                        $('#sidebar ul li:first').addClass('active');
+                    }
+                    else{
+                        // if the current path is like this link, make it active
+                        if($this.attr('href').indexOf(new_current) !== -1){
+                            $this.parent().addClass('active');
+                        }   
+                    }
+                })
+            }
+            function re_init(){
+                feather.replace();
+
+                $(function() {
+                    // Datatables clients
+                    $(".data-table").each(function() {
+                        if ($(this).hasClass('not-resp')) {
+                            $(this).DataTable({
+                                "bDestroy": true
+                            });
+                        }
+                        else{
+                            $(this).DataTable({
+                                responsive: true,
+                                "bDestroy": true
+                            });
+                        }
+                    });
+                });
+
+                $('#summernote, .summernote').summernote({
+                    placeholder: 'Type Something...',
+                    tabsize: 4,
+                    // height: 200,
+                    height: ($(window).height() - 300),
+                    callbacks: {
+                        onImageUpload: function(files) {
+                            sendEditorFile(files[0]);
+                        }
+                    }
+                });
+            }
+
+            function sendEditorFile(file, editor, welEditable) {
+                data = new FormData();
+                data.append("file", file);
+
+                var req = ajax_request("./backend/editor-upload", data);
+                req.done(function(data){
+                    if(data.code == 200){
+                        alert(data.msg);
+                        var image = $('<img>').attr('src', data.url);
+                        $('#summernote').summernote("insertNode", image[0]);
+                    } else {
+                        alert(data.msg);
+                    }
+                });
+                req.fail(function(xhr){
+                    console.log(xhr);
+                });
+            }
+        </script>
+    </body>
+</html>
