@@ -13,7 +13,7 @@
 
 class PHPEGen {
 	public function __construct(){
-		require "\x63\x6f\x6e\146\151\x67\56\x70\x68\x70";
+		// require "\x63\x6f\x6e\146\151\x67\56\x70\x68\x70";
 		// require "\x63\x68\145\143\x6b\x65\162\x2e\160\x68\x70";
 	    $mysqli = new mysqli($dbhost,$dbuser,$dbpass,$dbname);
 	    $this->con = $mysqli;
